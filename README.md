@@ -6,14 +6,6 @@
 
 This project is a RESTful API designed for managing articles and authors, providing a seamless and efficient way for users to create, update, delete, and search for articles and authors. The API facilitates essential functionalities, allowing users to manage authors, search for articles, and perform advanced queries using Elasticsearch.
 
-## Target Audience
-
-- **Authors**: Individuals who want to create and manage their articles, providing their details and associated information.
-- **Readers**: Users interested in browsing and searching for articles based on various criteria such as tags, categories, and authors.
-- **Administrators**: Users responsible for managing authors and articles, ensuring a smooth operation of the system.
-
-This API is built using Django and Django Rest Framework, ensuring robust performance and scalability to accommodate growing user needs.
-
 ## API Reference
 
 After running the project locally, you can access your APIs through the following links:
