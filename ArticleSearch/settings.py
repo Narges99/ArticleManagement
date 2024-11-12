@@ -11,12 +11,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+
+from elasticsearch import Elasticsearch
 from elasticsearch_dsl import connections
 
 connections.create_connection(alias='default', hosts=['http://localhost:9200'])
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -138,3 +141,7 @@ ELASTICSEARCH_DSL = {
     }
 }
 ELASTICSEARCH_HOST = 'http://localhost:9200'
+es = Elasticsearch(hosts=[ELASTICSEARCH_HOST])
+
+def get_es_connection():
+    return es
