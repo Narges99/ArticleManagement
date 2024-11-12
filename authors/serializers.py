@@ -1,4 +1,3 @@
-from elasticsearch_dsl import Q
 from rest_framework import serializers
 from .documents import AuthorDocument
 from datetime import datetime
@@ -48,22 +47,3 @@ class AuthorSerializer(serializers.Serializer):
                 "_source": author_data
             })
         return actions
-
-    def filter_by_params(self, query_params):
-        query = Q("match_all")
-
-        name = query_params.get("name")
-        specialization = query_params.get("specialization")
-        created_from = query_params.get("created_from")
-        created_to = query_params.get("created_to")
-
-        if name:
-            query &= Q("match", name=name)
-
-        if specialization:
-            query &= Q("match", specialization=specialization)
-
-        if created_from and created_to:
-            query &= Q("range", created_at={"gte": created_from, "lte": created_to})
-
-        return AuthorDocument.search().query(query)
