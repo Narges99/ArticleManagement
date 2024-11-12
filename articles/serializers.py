@@ -3,6 +3,7 @@ from .documents import ArticleDocument
 from datetime import datetime
 import pytz
 
+
 class ArticleAuthorSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     email = serializers.EmailField(required=False)
@@ -55,3 +56,7 @@ class ArticleSerializer(serializers.Serializer):
         representation['categories'] = list(instance.categories) if hasattr(instance, 'categories') else []
 
         return representation
+
+    def validate(self, data):
+        filters = {key: value for key, value in data.items() if value}
+        return filters
