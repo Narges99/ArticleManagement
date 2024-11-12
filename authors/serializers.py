@@ -1,7 +1,8 @@
-import re
+from elasticsearch_dsl import Q
 from rest_framework import serializers
 from .documents import AuthorDocument
 from datetime import datetime
+import re
 
 class AuthorSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)
@@ -22,12 +23,7 @@ class AuthorSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
-        if hasattr(instance, 'meta') and hasattr(instance.meta, 'id'):
-            representation['id'] = instance.meta.id
-        else:
-            representation['id'] = None
-
+        representation['id'] = getattr(instance.meta, 'id', None)
         return representation
 
     def create(self, validated_data):
@@ -41,3 +37,33 @@ class AuthorSerializer(serializers.Serializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+    def bulk_create_actions(self):
+        actions = []
+        for author_data in self.validated_data:
+            author_data['created_at'] = datetime.now()
+            actions.append({
+                "_op_type": "index",
+                "_index": "authors",
+                "_source": author_data
+            })
+        return actions
+
+    def filter_by_params(self, query_params):
+        query = Q("match_all")
+
+        name = query_params.get("name")
+        specialization = query_params.get("specialization")
+        created_from = query_params.get("created_from")
+        created_to = query_params.get("created_to")
+
+        if name:
+            query &= Q("match", name=name)
+
+        if specialization:
+            query &= Q("match", specialization=specialization)
+
+        if created_from and created_to:
+            query &= Q("range", created_at={"gte": created_from, "lte": created_to})
+
+        return AuthorDocument.search().query(query)
